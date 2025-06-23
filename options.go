@@ -1,6 +1,7 @@
 package ufs
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/utsav-56/ufs/ulog"
@@ -78,4 +79,12 @@ func (ufs *UFS) handleMistakeWarning(mesage string) {
 		}
 		log.Println(mesage)
 	}
+}
+
+// wrapError is a helper function to wrap errors with function names
+func (ufs *UFS) wrapError(err error, functionName string) error {
+	if err != nil {
+		return fmt.Errorf("%s: %w", functionName, err)
+	}
+	return nil
 }

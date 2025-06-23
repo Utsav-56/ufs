@@ -826,10 +826,3 @@ func (ufs *UFS) AppendToFirstLine(path string, content string) error {
 	return ufs.WriteStringToFile(path, newContent)
 }
 
-// wrapError is a helper function to wrap errors with function names
-func (ufs *UFS) wrapError(err error, functionName string) error {
-	if err != nil {
-		return fmt.Errorf("%s: %w", functionName, err)
-	}
-	return nil
-}
