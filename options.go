@@ -1,12 +1,17 @@
 package ufs
 
-import "log"
+import (
+	"log"
+
+	"github.com/utsav-56/ufs/ulog"
+)
 
 // options.go
 
 type Options struct {
 	ShowError      bool
 	ReturnReadable bool
+	prettifyError  bool // If true, prettify the error messages
 }
 
 type UFS struct {
@@ -17,6 +22,7 @@ var dufs *UFS = &UFS{
 	opts: Options{
 		ShowError:      true,
 		ReturnReadable: false,
+		prettifyError:  true, // Default to prettifying errors
 	},
 }
 
@@ -45,11 +51,19 @@ func (ufs *UFS) SetOptions(opts *Options) {
 
 func (ufs *UFS) handleError(err error, operation ...string) {
 	if ufs.opts.ShowError {
+
+		errMessage := err.Error()
+
+		if ufs.opts.prettifyError {
+			ulog.Error(errMessage, operation...)
+			return
+		}
+
 		if len(operation) > 0 {
 			// Log the error with operation context
-			log.Printf("%s: %v", operation[0], err)
+			log.Printf("%s: %v", operation[0], errMessage)
 		} else {
-			log.Println(err)
+			log.Println(errMessage)
 		}
 	}
 
@@ -58,6 +72,10 @@ func (ufs *UFS) handleError(err error, operation ...string) {
 
 func (ufs *UFS) handleMistakeWarning(mesage string) {
 	if ufs.opts.ShowError {
+		if ufs.opts.prettifyError {
+			ulog.Warning(mesage)
+			return
+		}
 		log.Println(mesage)
 	}
 }

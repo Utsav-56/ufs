@@ -95,3 +95,21 @@ func (ufs *UFS) GetFileList(path string) []string {
 	}
 	return files
 }
+
+func (ufs *UFS) GetFileMetadata(path string) map[string]interface{} {
+	info, err := os.Stat(path)
+	if err != nil {
+		ufs.handleError(err, "GetFileMetadata")
+		return nil
+	}
+	metadata := map[string]interface{}{
+		"Name":    info.Name(),
+		"Size":    info.Size(),
+		"Mode":    info.Mode().String(),
+		"ModTime": info.ModTime(),
+		"IsDir":   info.IsDir(),
+	}
+
+	return metadata
+
+}
