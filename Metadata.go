@@ -1,7 +1,6 @@
 package ufs
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -12,15 +11,14 @@ import (
 Usage:
 size := ufs.GetFileSize("/path/to/file.txt")
 */
-
-func GetFileSize(path string) int64 {
+func (ufs *UFS) GetFileSize(path string) int64 {
 	info, err := os.Stat(path)
 	if err != nil {
-		log.Println("GetFileSize error:", err)
+		ufs.handleError(err, "GetFileSize")
 		return 0
 	}
 	if info.IsDir() {
-		log.Println("GetFileSize: path is a directory, not a file")
+		ufs.handleMistakeWarning("GetFileSize called on a directory, returning 0")
 		return 0
 	}
 	return info.Size()
@@ -32,17 +30,17 @@ func GetFileSize(path string) int64 {
 Usage:
 size := ufs.GetFolderSize("/path/to/directory")
 */
-func GetFolderSize(path string) int64 {
+func (ufs *UFS) GetFolderSize(path string) int64 {
 	var size int64
 	err := filepath.WalkDir(path, func(p string, d os.DirEntry, err error) error {
 		if err != nil {
-			log.Println("Walk error:", err)
+			ufs.handleError(err, "GetFolderSize")
 			return nil
 		}
 		if !d.IsDir() {
 			info, err := d.Info()
 			if err != nil {
-				log.Println("Info error:", err)
+				ufs.handleError(err, "GetFolderSize")
 				return nil
 			}
 			size += info.Size()
@@ -50,7 +48,7 @@ func GetFolderSize(path string) int64 {
 		return nil
 	})
 	if err != nil {
-		log.Println("GetFolderSize error:", err)
+		ufs.handleError(err, "GetFolderSize")
 		return 0
 	}
 	return size
@@ -62,11 +60,11 @@ func GetFolderSize(path string) int64 {
 Usage:
 folders := ufs.GetFolderList("/path/to/directory")
 */
-func GetFolderList(path string) []string {
+func (ufs *UFS) GetFolderList(path string) []string {
 	var folders []string
 	entries, err := os.ReadDir(path)
 	if err != nil {
-		log.Println("GetFolderList error:", err)
+		ufs.handleError(err, "GetFolderList")
 		return []string{}
 	}
 	for _, entry := range entries {
@@ -83,12 +81,11 @@ func GetFolderList(path string) []string {
 Usage:
 files := ufs.GetFileList("/path/to/directory")
 */
-
-func GetFileList(path string) []string {
+func (ufs *UFS) GetFileList(path string) []string {
 	var files []string
 	entries, err := os.ReadDir(path)
 	if err != nil {
-		log.Println("GetFileList error:", err)
+		ufs.handleError(err, "GetFileList")
 		return []string{}
 	}
 	for _, entry := range entries {

@@ -1,6 +1,9 @@
 package ufs
 
+import "log"
+
 // options.go
+
 type Options struct {
 	ShowError      bool
 	ReturnReadable bool
@@ -37,5 +40,24 @@ func (ufs *UFS) SetOptions(opts *Options) {
 		ufs.opts = *NewOptions()
 	} else {
 		ufs.opts = *opts
+	}
+}
+
+func (ufs *UFS) handleError(err error, operation ...string) {
+	if ufs.opts.ShowError {
+		if len(operation) > 0 {
+			// Log the error with operation context
+			log.Printf("%s: %v", operation[0], err)
+		} else {
+			log.Println(err)
+		}
+	}
+
+	// Simply do nothing if ShowError is false
+}
+
+func (ufs *UFS) handleMistakeWarning(mesage string) {
+	if ufs.opts.ShowError {
+		log.Println(mesage)
 	}
 }
