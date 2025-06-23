@@ -1,0 +1,71 @@
+package main
+
+import (
+	"fmt"
+	"io/fs"
+
+	"github.com/utsav-56/ufs" // Adjust the import path as necessary
+)
+
+func main() {
+	ufsInstance := &ufs.UFS{}
+
+	// Example: CreateFile
+	ok := ufsInstance.CreateFile("example_file.txt")
+	fmt.Printf("CreateFile: %v\n", ok)
+
+	// Example: CreateFileWithContent
+	ok = ufsInstance.CreateFileWithContent("example_content.txt", "Hello, World!")
+	fmt.Printf("CreateFileWithContent: %v\n", ok)
+
+	// Example: CreateFileWithContentAndPermissions
+	ok = ufsInstance.CreateFileWithContentAndPermissions("example_content_perm.txt", "Hello, Permissions!", 0644)
+	fmt.Printf("CreateFileWithContentAndPermissions: %v\n", ok)
+
+	// Example: CreateFileWithPermissions
+	ok = ufsInstance.CreateFileWithPermissions("example_perm.txt", 0644)
+	fmt.Printf("CreateFileWithPermissions: %v\n", ok)
+
+	// Example: CreateDirectory
+	ok = ufsInstance.CreateDirectory("example_dir")
+	fmt.Printf("CreateDirectory: %v\n", ok)
+
+	// Example: CreateDirectoryWithPermissions
+	ok = ufsInstance.CreateDirectoryWithPermissions("example_dir_perm", 0755)
+	fmt.Printf("CreateDirectoryWithPermissions: %v\n", ok)
+
+	// Example: CreateSymlink
+	ok = ufsInstance.CreateSymlink("example_file.txt", "example_symlink.txt")
+	fmt.Printf("CreateSymlink: %v\n", ok)
+
+	// Example: CreateHardLink
+	ok = ufsInstance.CreateHardLink("example_file.txt", "example_hardlink.txt")
+	fmt.Printf("CreateHardLink: %v\n", ok)
+
+	// Example: CreateDirectoryTree
+	structure := map[string]interface{}{
+		"dir1": nil,
+		"dir2": map[string]interface{}{
+			"subdir1": nil,
+			"subdir2": map[string]interface{}{
+				"subsubdir": nil,
+			},
+		},
+	}
+	ok = ufsInstance.CreateDirectoryTree("example_tree", structure)
+	fmt.Printf("CreateDirectoryTree: %v\n", ok)
+
+	// Example: CreateDirectoryTreeWithPermissions
+	structurePerm := map[string]interface{}{
+		"dirA": nil,
+		"dirB": map[string]interface{}{
+			"subdirA": nil,
+		},
+	}
+	ok = ufsInstance.CreateDirectoryTreeWithPermissions("example_tree_perm", structurePerm, fs.FileMode(0755))
+	fmt.Printf("CreateDirectoryTreeWithPermissions: %v\n", ok)
+
+	// Example: SymlinkDirectoryTree
+	ok = ufsInstance.SymlinkDirectoryTree("example_tree", "example_tree_symlinks", true)
+	fmt.Printf("SymlinkDirectoryTree: %v\n", ok)
+}
