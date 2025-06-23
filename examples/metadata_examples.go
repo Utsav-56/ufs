@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/utsav-56/ufs" // Make sure your module path is correct
+	"github.com/utsav-56/ufs/ulog"
 )
 
 func main() {
@@ -27,4 +28,17 @@ func main() {
 	// Example: GetFileList
 	files := ufs.GetFileList(dirPath)
 	fmt.Printf("Files in %s: %v\n", dirPath, files)
+
+	// Example: GetFolderMetadata
+	metadata := ufs.Get(dirPath)
+	ulog.PrintMapWithIndent(metadata, " ")
+
+	// Example: GetFileMetadata
+	fileMetadata := ufs.GetFileMetadata(filePath)
+	ulog.PrintMapWithIndent(fileMetadata, " ")
+
+	// Example: GetFolderChildCount
+	childCount := ufs.GetFolderChildCount(dirPath)
+	fmt.Printf("Number of children in folder %s: %d\n", dirPath, childCount)
+
 }
