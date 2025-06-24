@@ -10,4 +10,7 @@ func main() {
 
 	ufsInstance.ExtractArchive("./compressed.zip", "./extracted")
 
+
+	ufs.GetFolderList("./extracted")
+
 }

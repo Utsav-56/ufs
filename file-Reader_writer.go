@@ -279,91 +279,6 @@ func (ufs *UFS) CopyFile(src, dst string) error {
 	return nil
 }
 
-// MoveFile moves a file from one location to another.
-// If the destination file already exists, it will be overwritten.
-// This function will create any parent directories for the destination if they don't exist.
-//
-// Parameters:
-//   - src: The absolute or relative path to the source file
-//   - dst: The absolute or relative path to the destination file
-//
-// Returns:
-//   - error: An error if the file couldn't be moved
-//
-// Example:
-//
-//	err := ufs.MoveFile("/path/to/source.txt", "/path/to/destination.txt")
-//	if err != nil {
-//	    fmt.Printf("Error moving file: %v\n", err)
-//	    return
-//	}
-//	fmt.Println("File moved successfully")
-func (ufs *UFS) MoveFile(src, dst string) error {
-	// Verify source is a file
-	if !ufs.IsFile(src) {
-		return fmt.Errorf("source is not a file: %s", src)
-	}
-
-	// Ensure the destination directory exists
-	dstDir := filepath.Dir(dst)
-	if !ufs.IsDirectory(dstDir) {
-		err := os.MkdirAll(dstDir, 0755)
-		if err != nil {
-			return ufs.wrapError(err, "MoveFile")
-		}
-	}
-
-	// Try to rename the file (only works on same file system)
-	err := os.Rename(src, dst)
-	if err == nil {
-		return nil
-	}
-
-	// If rename fails, try copy and delete
-	err = ufs.CopyFile(src, dst)
-	if err != nil {
-		return err
-	}
-
-	// Delete the source file
-	err = os.Remove(src)
-	if err != nil {
-		return ufs.wrapError(err, "MoveFile")
-	}
-
-	return nil
-}
-
-// DeleteFile deletes a specified file.
-// This is a wrapper around os.Remove that adds error handling.
-//
-// Parameters:
-//   - path: The absolute or relative path to the file to delete
-//
-// Returns:
-//   - error: An error if the file couldn't be deleted
-//
-// Example:
-//
-//	err := ufs.DeleteFile("/path/to/file.txt")
-//	if err != nil {
-//	    fmt.Printf("Error deleting file: %v\n", err)
-//	    return
-//	}
-//	fmt.Println("File deleted successfully")
-func (ufs *UFS) DeleteFile(path string) error {
-	// Verify it's a file
-	if !ufs.IsFile(path) {
-		return fmt.Errorf("path is not a file: %s", path)
-	}
-
-	err := os.Remove(path)
-	if err != nil {
-		return ufs.wrapError(err, "DeleteFile")
-	}
-	return nil
-}
-
 // CopyFileWithPermissions copies a file to a new location, preserving its permissions.
 // If the destination file already exists, it will be overwritten.
 // This function will create any parent directories for the destination if they don't exist.
@@ -825,4 +740,3 @@ func (ufs *UFS) AppendToFirstLine(path string, content string) error {
 
 	return ufs.WriteStringToFile(path, newContent)
 }
-
