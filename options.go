@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/utsav-56/ufs/ulog"
+	"github.com/utsav-56/ulog"
 )
 
 // options.go
